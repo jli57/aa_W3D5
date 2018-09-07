@@ -34,8 +34,8 @@ module Associatable
         WHERE
           #{through_table}.#{through_pk} = ?
       SQL
-      
-      source_class.new(results.first)
+
+      source_class.prase_all(results).first
     end
   end
 end
