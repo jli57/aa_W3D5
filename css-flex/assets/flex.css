@@ -19,11 +19,10 @@ ul li a, figcaption a {
 
 header > img {
   width: 100px;
-  float: left;
+  /* float: left; */
 }
 
 .ingredients-list {
-
   list-style: square inside;
 }
 
@@ -67,11 +66,15 @@ h2 + .user_review {
 }
 
 nav {
-    float: right;
+    /* float: right; */
 }
 
 nav ul li {
-    display: inline-block;
+    /* display: inline-block; */
+}
+
+nav ul {
+      display: flex;
 }
 
 nav ul li a {
@@ -110,3 +113,7 @@ label {
     display: block;
 }
 
+header {
+    display: flex;
+    justify-content: space-between;
+}
