@@ -37,7 +37,7 @@ class SQLObject
   end
 
   def self.table_name
-    @table_name ||= self.name.tableize
+    @table_name ||= self.name.underscore.tableize
   end
 
   def self.all
@@ -81,10 +81,9 @@ class SQLObject
   end
 
   def insert
-    cols = self.class.columns[1..-1]
-    id = self.class.columns.first
+    cols = self.class.columns.drop(1)
     col_names = cols.map(&:to_s).join(", ")
-    col_values = attribute_values[1..-1]
+    col_values = attribute_values.drop(1)
     question_marks = (["?"] * cols.length).join(", ")
     DBConnection.execute(<<-SQL, *col_values )
       INSERT INTO
@@ -92,12 +91,11 @@ class SQLObject
       VALUES
         (#{question_marks})
     SQL
-    self.send("#{id}=", DBConnection.last_insert_row_id)
+    self.id = DBConnection.last_insert_row_id
   end
 
   def update
-    cols = self.class.columns[1..-1]
-    id_col = self.class.columns.first
+    cols = self.class.columns.drop(1)
     set_values = cols.map { |col| "#{col.to_sym} = ?" }.join(", ")
     col_values = attribute_values.drop(1) + attribute_values.take(1)
     DBConnection.execute(<<-SQL, *col_values)
@@ -111,10 +109,10 @@ class SQLObject
   end
 
   def save
-    if self.send(self.class.columns.first)
-      self.update
-    else
+    if self.id.nil?
       self.insert
+    else
+      self.update
     end
   end
 end
